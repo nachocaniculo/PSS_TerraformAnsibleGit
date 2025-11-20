@@ -1,0 +1,9 @@
+---
+- name: Configure the WordPress Web Server
+  hosts: role_web
+  become: true
+  vars:
+    db_host: "{{ hostvars[groups['role_db'][0]]['ansible_host'] }}"
+  roles:
+    - webserver
+...
