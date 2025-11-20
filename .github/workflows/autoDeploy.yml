@@ -71,10 +71,10 @@
         - name: Check Ansible syntax
           run: |
             export ANSIBLE_CONFIG=.Ansible/ansible.cfg
-            ansible-playbook --syntax-check .Ansible/site.yml --private-key ./temp_key.pem
+            ansible-playbook --syntax-check Ansible/site.yml --private-key ./temp_key.pem
 
         - name: Run Ansible Playbook
           run: |
             export ANSIBLE_CONFIG=./Ansible/ansible.cfg
-            ansible-playbook ./Ansible/site.yml --private-key ./temp_key.pem
+            ansible-playbook Ansible/site.yml --private-key ./temp_key.pem
 
