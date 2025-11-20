@@ -220,7 +220,7 @@ resource "aws_launch_template" "web_lt" {
   name_prefix   = "NachoCaniculo-web-lt"
   image_id      = data.aws_ami.ubuntu.id
   instance_type = "t3.small"
-  key_name      = "NachoCaniculo-Keypair"
+  key_name      = "NachoCaniculo-KeypairPermanent"
 
   vpc_security_group_ids = [aws_security_group.web_sg.id]
 
