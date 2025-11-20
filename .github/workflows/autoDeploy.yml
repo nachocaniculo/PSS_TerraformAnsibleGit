@@ -1,80 +1,78 @@
-  name: Deploy Infrastructure with Terraform and Configure with Ansible
+name: Deploy Infrastructure with Terraform and Configure with Ansible
 
-  on:
-    workflow_dispatch:
+on:
+  workflow_dispatch:
 
-  jobs:
-    validate-terraform:
-      name: Terraform Plan & Apply
-      runs-on: ubuntu-latest
-      env:
-        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        AWS_REGION: ${{ secrets.AWS_REGION }}
-        EC2_SSH_PRIVATE_KEY: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
+jobs:
+  validate-terraform:
+    name: Terraform Plan & Apply
+    runs-on: ubuntu-latest
+    env:
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      AWS_REGION: ${{ secrets.AWS_REGION }}
+      EC2_SSH_PRIVATE_KEY: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
 
-      steps:
-        - name: Checkout repository
-          uses: actions/checkout@v4
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-        - name: Create temporary SSH key
-          run: |
-            echo "${{ secrets.EC2_SSH_PRIVATE_KEY }}" > ./temp_key.pem
-            chmod 600 ./temp_key.pem
+      - name: Create temporary SSH key
+        run: |
+          echo "${{ secrets.EC2_SSH_PRIVATE_KEY }}" > ./temp_key.pem
+          chmod 600 ./temp_key.pem
 
-        - name: Setup Terraform
-          uses: hashicorp/setup-terraform@v3
-          with:
-            terraform_version: 1.13.5
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.13.5
 
-        - name: Terraform Init
-          working-directory: ./Terraform
-          run: terraform init
+      - name: Terraform Init
+        working-directory: ./Terraform
+        run: terraform init
 
-        - name: Terraform Validate
-          working-directory: ./Terraform
-          run: terraform validate
+      - name: Terraform Validate
+        working-directory: ./Terraform
+        run: terraform validate
 
-        - name: Terraform Plan
-          working-directory: ./Terraform
-          run: terraform plan
+      - name: Terraform Plan
+        working-directory: ./Terraform
+        run: terraform plan
 
-        - name: Terraform Init & Apply
-          working-directory: ./Terraform
-          run: terraform apply -auto-approve
+      - name: Terraform Apply
+        working-directory: ./Terraform
+        run: terraform apply -auto-approve
 
-    validate-ansible:
-      name: Configure EC2 with Ansible
-      runs-on: ubuntu-latest
-      needs: validate-terraform   
-      env:
-        AWS_REGION: ${{ secrets.AWS_REGION }}
-        ANSIBLE_HOST_KEY_CHECKING: "False"
+  validate-ansible:
+    name: Configure EC2 with Ansible
+    runs-on: ubuntu-latest
+    needs: validate-terraform
+    env:
+      AWS_REGION: ${{ secrets.AWS_REGION }}
+      ANSIBLE_HOST_KEY_CHECKING: "False"
 
-      steps:
-        - name: Checkout repository
-          uses: actions/checkout@v4
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-        - name: Setup python
-          uses: actions/setup-python@v5
-          with:
-            python-version: '3.x'
+      - name: Setup python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
 
-        - name: Install Ansible
-          run: |
-            sudo apt update
-            sudo apt install -y ansible sshpass
+      - name: Install dependencies
+        run: |
+          sudo apt update
+          sudo apt install -y sshpass
+          python -m pip install --upgrade pip
+          pip install ansible boto3 botocore ansible[amazon.aws]
 
-        - name: Install dependencies
-          run: ansible-galaxy collection install amazon.aws
+      - name: Check Ansible syntax
+        run: |
+          export ANSIBLE_CONFIG=Ansible/ansible.cfg
+          ansible-playbook --syntax-check Ansible/site.yml --private-key ./temp_key.pem
 
-        - name: Check Ansible syntax
-          run: |
-            export ANSIBLE_CONFIG=.Ansible/ansible.cfg
-            ansible-playbook --syntax-check Ansible/site.yml --private-key ./temp_key.pem
-
-        - name: Run Ansible Playbook
-          run: |
-            export ANSIBLE_CONFIG=./Ansible/ansible.cfg
-            ansible-playbook Ansible/site.yml --private-key ./temp_key.pem
-
+      - name: Run Ansible Playbook
+        run: |
+          export ANSIBLE_CONFIG=Ansible/ansible.cfg
+          ansible-playbook Ansible/site.yml --private-key ./temp_key.pem
