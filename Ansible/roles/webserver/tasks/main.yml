@@ -1,21 +1,17 @@
 ---
-- name: Install and config Nginx in webservers
-  hosts: webservers
-  become: true
+- name: Install Nginx
+  apt:
+    name: nginx
+    state: present
+    update_cache: yes
 
-  tasks:
-    - name: Install Nginx
-      apt:
-        name: nginx
-        state: present
+- name: Ensure Nginx is started and enabled
+  systemd:
+    name: nginx
+    state: started
+    enabled: yes
 
-    - name: Ensure Nginx is started and enabled
-      systemd:
-        name: nginx
-        state: started
-        enabled: yes
-
-    - name: Create test web
-      copy:
-        dest: /var/www/html/index.html
-        content: "<h1>Hola, web de Nacho Caniculo!</h1>"
+- name: Create test web
+  copy:
+    dest: /var/www/html/index.html
+    content: "<h1>Hola, web de Nacho Caniculo!</h1>"
