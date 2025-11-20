@@ -16,7 +16,7 @@ resource "aws_internet_gateway" "igw" {
 resource "aws_subnet" "public_a" {
   vpc_id                  = aws_vpc.main.id
   cidr_block              = "10.0.1.0/24"
-  availability_zone       = "us-east-1a"
+  availability_zone       = "us-west-2a"
   map_public_ip_on_launch = true
 
   tags = { Name = "NachoCaniculo-Public-A" }
@@ -26,7 +26,7 @@ resource "aws_subnet" "public_a" {
 resource "aws_subnet" "public_c" {
   vpc_id                  = aws_vpc.main.id
   cidr_block              = "10.0.3.0/24"
-  availability_zone       = "us-east-1c"
+  availability_zone       = "us-west-2c"
   map_public_ip_on_launch = true
 
   tags = { Name = "NachoCaniculo-Public-C" }
@@ -36,7 +36,7 @@ resource "aws_subnet" "public_c" {
 resource "aws_subnet" "private_a" {
   vpc_id            = aws_vpc.main.id
   cidr_block        = "10.0.2.0/24"
-  availability_zone = "us-east-1a"
+  availability_zone = "us-west-2a"
 
   tags = { Name = "NachoCaniculo-Private-A" }
 }
@@ -45,7 +45,7 @@ resource "aws_subnet" "private_a" {
 resource "aws_subnet" "private_c" {
   vpc_id            = aws_vpc.main.id
   cidr_block        = "10.0.4.0/24"
-  availability_zone = "us-east-1c"
+  availability_zone = "us-west-2c"
 
   tags = { Name = "NachoCaniculo-Private-C" }
 }
