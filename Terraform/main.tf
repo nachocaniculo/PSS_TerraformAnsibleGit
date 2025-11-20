@@ -267,7 +267,7 @@ resource "aws_db_subnet_group" "rds_group" {
 }
 
 resource "aws_db_instance" "postgres" {
-  identifier             = "NachoCaniculoWordpress"
+  identifier             = "nachocaniculowordpress"
   engine                 = "postgres"
   instance_class         = "db.t3.micro"
   allocated_storage      = 20
