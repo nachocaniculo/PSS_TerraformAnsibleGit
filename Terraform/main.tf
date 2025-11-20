@@ -236,10 +236,10 @@ resource "aws_launch_template" "web_lt" {
 
 
 resource "aws_autoscaling_group" "web_asg" {
-  name                = "NachoCaniculo-Web-ASG"
-  min_size            = 2
-  max_size            = 4
-  desired_capacity    = 2
+  name             = "NachoCaniculo-Web-ASG"
+  min_size         = 2
+  max_size         = 4
+  desired_capacity = 2
   vpc_zone_identifier = [
     aws_subnet.public_a.id,
     aws_subnet.public_c.id
@@ -254,7 +254,7 @@ resource "aws_autoscaling_group" "web_asg" {
 }
 
 resource "aws_db_subnet_group" "rds_group" {
-  name       = "nachocaniculo-rds-subnets"
+  name = "nachocaniculo-rds-subnets"
   subnet_ids = [
     aws_subnet.private_a.id,
     aws_subnet.private_c.id
