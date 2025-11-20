@@ -238,7 +238,17 @@ resource "aws_launch_template" "web_lt" {
   key_name      = aws_key_pair.keypair.key_name
 
   vpc_security_group_ids = [aws_security_group.web_sg.id]
+
+  tag_specifications {
+    resource_type = "instance"
+
+    tags = {
+      Name = "NachoCaniculo-Web"
+      role = "webdeploy"
+    }
+  }
 }
+
 
 resource "aws_autoscaling_group" "web_asg" {
   name                = "NachoCaniculo-Web-ASG"
