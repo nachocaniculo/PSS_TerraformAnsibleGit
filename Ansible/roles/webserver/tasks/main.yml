@@ -1,25 +1,21 @@
 ---
-- name: Instalar y configurar Nginx en servidores web
+- name: Install and config Nginx in webservers
   hosts: webservers
   become: true
 
   tasks:
-    - name: Actualizar repositorios
-      apt:
-        update_cache: yes
-
-    - name: Instalar Nginx
+    - name: Install Nginx
       apt:
         name: nginx
         state: present
 
-    - name: Asegurarse que Nginx esté iniciado y habilitado
+    - name: Ensure Nginx is started and enabled
       systemd:
         name: nginx
         state: started
         enabled: yes
 
-    - name: Copiar página de prueba
+    - name: Create test web
       copy:
         dest: /var/www/html/index.html
         content: "<h1>Hola, web de Nacho Caniculo!</h1>"

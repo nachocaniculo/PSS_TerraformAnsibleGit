@@ -1,5 +1,5 @@
 ---
-- name: Configure the WordPress Web Server
+- name: Configure the test webserver
   hosts: role_web
   become: true
   vars:
