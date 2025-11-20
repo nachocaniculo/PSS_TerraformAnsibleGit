@@ -1,9 +1,23 @@
 ---
-- name: Configure the test webserver
-  hosts: role_web
-  become: true
-  vars:
-    db_host: "{{ hostvars[groups['role_db'][0]]['ansible_host'] }}"
-  roles:
-    - webserver
-...
+- name: Instalar y configurar Nginx
+  hosts: role_webdeploy
+  become: yes
+
+  tasks:
+    - name: Install Nginx
+      apt:
+        name: nginx
+        state: present
+        update_cache: yes
+
+    - name: Ensure Nginx is started and enabled
+      systemd:
+        name: nginx
+        state: started
+        enabled: yes
+
+    - name: Create test web
+      copy:
+        dest: /var/www/html/index.html
+        content: "<h1>Hola, web de Nacho Caniculo!</h1>"
+
