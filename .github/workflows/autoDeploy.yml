@@ -27,6 +27,10 @@ jobs:
         working-directory: ./Terraform
         run: terraform init
 
+      - name: Terraform Format
+        working-directory: ./Terraform
+        run: terraform fmt -check -recursive
+
       - name: Terraform Validate
         working-directory: ./Terraform
         run: terraform validate
@@ -75,6 +79,11 @@ jobs:
         run: |
           export ANSIBLE_CONFIG=Ansible/ansible.cfg
           ansible-playbook --syntax-check Ansible/site.yml --private-key ./temp_key.pem
+
+      - name: Run ansible-lint
+        run: |
+          pip install ansible-lint
+          ansible-lint Ansible/
 
       - name: Run Ansible Playbook
         run: |
