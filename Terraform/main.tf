@@ -186,21 +186,6 @@ resource "aws_security_group" "rds_sg" {
   }
 }
 
-resource "tls_private_key" "keypair" {
-  algorithm = "RSA"
-  rsa_bits  = 4096
-}
-
-resource "aws_key_pair" "keypair" {
-  key_name   = "NachoCaniculo-Keypair"
-  public_key = tls_private_key.keypair.public_key_openssh
-}
-
-resource "local_file" "pem" {
-  content  = tls_private_key.keypair.private_key_pem
-  filename = "${path.module}/../Ansible/NachoCaniculo.pem"
-}
-
 resource "aws_lb" "alb" {
   name               = "NachoCaniculo-ALB"
   internal           = false
@@ -235,7 +220,7 @@ resource "aws_launch_template" "web_lt" {
   name_prefix   = "NachoCaniculo-web-lt"
   image_id      = data.aws_ami.ubuntu.id
   instance_type = "t3.small"
-  key_name      = aws_key_pair.keypair.key_name
+  key_name      = "NachoCaniculo-Keypair"
 
   vpc_security_group_ids = [aws_security_group.web_sg.id]
 
